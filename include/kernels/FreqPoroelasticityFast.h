@@ -74,6 +74,17 @@ protected:
     const MaterialProperty<Number> & _tr_eps;
     
     Number const _imagUnit;
+    
+    // these are vectors and matrices used to store the local matrices and RHSs.
+    // Grazie al compilatore di Eric
+    DenseVector<Number> *_f_local;
+    DenseVector<Number> _f_p_local;
+    DenseMatrix<Number> **_Elasticity;
+    DenseMatrix<Number> *_Gradient;
+    DenseMatrix<Number> *_Divergence;
+    DenseMatrix<Number> _Diffusion;
+    DenseMatrix<Number> _Mass;
+    
 };
 
 #endif 

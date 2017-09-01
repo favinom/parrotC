@@ -4,6 +4,11 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
+#include "FreqPoroelasticityFast.h"
+#include "FreqPoroelasticSphere.h"
+#include "DirichletBCC.h"
+
+
 template<>
 InputParameters validParams<ParrotCApp>()
 {
@@ -40,6 +45,10 @@ extern "C" void ParrotCApp__registerObjects(Factory & factory) { ParrotCApp::reg
 void
 ParrotCApp::registerObjects(Factory & factory)
 {
+    registerKernel(FreqPoroelasticityFast);
+    registerMaterial(FreqPoroelasticSphere);
+    registerBoundaryCondition(DirichletBCC);
+
 }
 
 // External entry point for dynamic syntax association

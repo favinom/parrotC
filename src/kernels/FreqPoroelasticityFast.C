@@ -72,6 +72,19 @@ FreqPoroelasticityFast::FreqPoroelasticityFast(const InputParameters & params) :
             _sigma_lin [d][j] = new RealTensorValue [64] /*[_qrule->n_points()]*/;
         }
     
+    // we allocate the local vecotrs and matrices
+    _f_local= new DenseVector<Number> [_dim];
+    _Elasticity = new DenseMatrix<Number> *[_dim];
+    
+    for (int d=0; d<_dim; ++d)
+    {
+        _Elasticity[d]=new DenseMatrix<Number>[_dim];
+    }
+
+    _Gradient= new DenseMatrix<Number> [_dim];
+    _Divergence=new DenseMatrix<Number> [_dim];
+
+    
     
 }
 
@@ -97,10 +110,6 @@ void FreqPoroelasticityFast::computeResidual2D()
     DenseVector<Number> & f_x = _assembly.residualBlock(_disp_x_var);
     DenseVector<Number> & f_y = _assembly.residualBlock(_disp_y_var);
     DenseVector<Number> & f_p = _assembly.residualBlock(_p_var);
-    
-    // Local (per element) vectors where entries of the residual are stored
-    DenseVector<Number> _f_local[_dim];
-    DenseVector<Number> _f_p_local;
     
     // Resize and initialization of local vectors
     // NOTE we assume the displacement variables are of the same order
@@ -155,9 +164,6 @@ void FreqPoroelasticityFast::computeResidual3D()
     
     DenseVector<Number> & f_p = _assembly.residualBlock(_p_var);
 
-    DenseVector<Number> _f_local[_dim];
-    DenseVector<Number> _f_p_local;
-
     for (int i=0; i<_dim; ++i)
     {
         _f_local[i].resize(f_x.size());
@@ -193,8 +199,8 @@ void FreqPoroelasticityFast::computeResidual3D()
     f_x += _f_local[0];
     f_y += _f_local[1];
     f_z += _f_local[2];
-
     f_p += _f_p_local;
+    
 }
 
 void FreqPoroelasticityFast::computeOffDiagJacobian(unsigned int jvar)
@@ -235,12 +241,6 @@ void FreqPoroelasticityFast::computeJacobian2D()
     DenseMatrix<Number> & B_py = _assembly.jacobianBlock(_p_var,_disp_y_var);
     DenseMatrix<Number> & C_pp = _assembly.jacobianBlock(_p_var,_p_var);
     
-    // Matrices where I assemble the right values
-    DenseMatrix<Number> _Elasticity[_dim][_dim];
-    DenseMatrix<Number> _Gradient[_dim];
-    DenseMatrix<Number> _Diffusion;
-    DenseMatrix<Number> _Mass;
-    
     for (int i=0; i<_dim; ++i)
     {
         for (int j=0; j<_dim; ++j)
@@ -278,7 +278,6 @@ void FreqPoroelasticityFast::computeJacobian2D()
                     _Gradient[idim](_i,_j)+=_JxW[_qp] * _coord[_qp]*_alpha[_qp]*_P1[_j][_qp]*V.tr();
                 }
     
-    DenseMatrix<Number> _Divergence[2];
     _Gradient[0].get_transpose(_Divergence[0]);
     _Gradient[1].get_transpose(_Divergence[1]);
     _Divergence[0]*=_imagUnit;
@@ -313,6 +312,7 @@ void FreqPoroelasticityFast::computeJacobian2D()
     C_pp  -= _Diffusion;
     _Mass *= -1.0*_imagUnit;
     C_pp  +=_Mass;
+    
 }
 
 void FreqPoroelasticityFast::computeJacobian3D()
@@ -337,12 +337,6 @@ void FreqPoroelasticityFast::computeJacobian3D()
     DenseMatrix<Number> &  B_py = _assembly.jacobianBlock(     _p_var, _disp_y_var);
     DenseMatrix<Number> &  B_pz = _assembly.jacobianBlock(     _p_var, _disp_z_var);
     DenseMatrix<Number> &  C_pp = _assembly.jacobianBlock(     _p_var,      _p_var);
-    
-    // Matrices where I assemble the right values
-    DenseMatrix<Number> _Elasticity[_dim][_dim];
-    DenseMatrix<Number> _Gradient[_dim];
-    DenseMatrix<Number> _Diffusion;
-    DenseMatrix<Number> _Mass;
     
     for (int i=0; i<_dim; ++i)
     {
@@ -381,7 +375,6 @@ void FreqPoroelasticityFast::computeJacobian3D()
                     _Gradient[idim](_i,_j)+=_JxW[_qp] * _coord[_qp]*_alpha[_qp]*_P1[_j][_qp]*V.tr();
                 }
     
-    DenseMatrix<Number> _Divergence[_dim];
     _Gradient[0].get_transpose(_Divergence[0]);
     _Gradient[1].get_transpose(_Divergence[1]);
     _Gradient[2].get_transpose(_Divergence[2]);
