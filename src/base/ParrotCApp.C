@@ -7,6 +7,8 @@
 #include "FreqPoroelasticityFast.h"
 #include "FreqPoroelasticSphere.h"
 #include "DirichletBCC.h"
+#include "MeanMaterialProperty.h"
+#include "AttenuationDispersion.h"
 
 
 template<>
@@ -48,6 +50,8 @@ ParrotCApp::registerObjects(Factory & factory)
     registerKernel(FreqPoroelasticityFast);
     registerMaterial(FreqPoroelasticSphere);
     registerBoundaryCondition(DirichletBCC);
+    registerPostprocessor(MeanMaterialProperty);
+    registerPostprocessor(AttenuationDispersion);
 
 }
 

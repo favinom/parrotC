@@ -108,3 +108,28 @@ nl_abs_tol = 1e-8
  print_linear_residuals = true
  print_perf_log = true
  []
+
+[Postprocessors]
+ 
+ [./omega_times_volume]
+ type = MeanMaterialProperty i = 1 j = 1 dostress = 0 doreal = 0 dofreq = 1 pressure = pressure
+ [../]
+[./MMP_eps_real]
+ type = MeanMaterialProperty i = 1 j = 1 dostress = 0 doreal = 1 dofreq = 0 pressure = pressure
+ [../]
+[./MMP_sigma_real]
+ type = MeanMaterialProperty i = 1 j = 1 dostress = 1 doreal = 1 dofreq = 0 pressure = pressure
+ [../]
+[./MMP_eps_imag]
+ type = MeanMaterialProperty i = 1 j = 1 dostress = 0 doreal = 0 dofreq = 0 pressure = pressure
+ [../]
+[./MMP_sigma_imag]
+ type = MeanMaterialProperty i = 1 j = 1 dostress = 1 doreal = 0 dofreq = 0 pressure = pressure
+ [../]
+[./attenuation]
+ type = AttenuationDispersion pp_name_real_stress = MMP_sigma_real pp_name_real_strain = MMP_eps_real pp_name_imag_stress  = MMP_sigma_imag pp_name_imag_strain = MMP_eps_imag  doatt = 1 doshear = 0
+ [../]
+[./dispersion]
+ type = AttenuationDispersion pp_name_real_stress = MMP_sigma_real pp_name_real_strain = MMP_eps_real pp_name_imag_stress  = MMP_sigma_imag pp_name_imag_strain = MMP_eps_imag  doatt = 0 doshear = 0
+ [../]
+ []
