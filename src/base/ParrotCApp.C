@@ -9,6 +9,9 @@
 #include "DirichletBCC.h"
 #include "MeanMaterialProperty.h"
 #include "AttenuationDispersion.h"
+#include "SimpleMarker.h"
+#include "SphereMarker.h"
+
 
 
 template<>
@@ -52,6 +55,8 @@ ParrotCApp::registerObjects(Factory & factory)
     registerBoundaryCondition(DirichletBCC);
     registerPostprocessor(MeanMaterialProperty);
     registerPostprocessor(AttenuationDispersion);
+    registerMarker(SimpleMarker);
+    registerMarker(SphereMarker);
 
 }
 
