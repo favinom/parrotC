@@ -25,21 +25,6 @@ partitioner = parmetis
  variable = pressure
 [../]
 
-#[AuxKernels]
-#[./MeshProcIDKern]
-# type = ProcessorIDAux
-# variable = MeshProcID
-#[../]
-#[]
-
-#[AuxVariables]
-#[./MeshProcID]
-# order = CONSTANT
-# family = MONOMIAL
-#[../]
-#[]
-
-
 #[BCs]
 #[./Periodic]
 #[./pressure_real_periodic] variable = pressure auto_direction = 'x y z' [../]
